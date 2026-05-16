@@ -1,0 +1,44 @@
+name: Reusable uv Lock Upgrade
+
+on:
+  workflow_call:
+    secrets:
+      PAT:
+        description: PAT used to create the pull request.
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lock-upgrade:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Upgrade lock files
+        run: uv lock --upgrade
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          add-paths: uv.lock
+          branch: chore/upgrade-uv-lock
+          commit-message: "chore(bot): 🔧 upgrade uv lock file"
+          title: "chore(bot): 🔧 Bump `uv.lock`"
+          body: |
+            Automated uv lock file upgrade.
+          delete-branch: true
+          token: ${{ secrets.PAT }}

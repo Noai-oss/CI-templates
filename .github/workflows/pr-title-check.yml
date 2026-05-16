@@ -1,0 +1,9 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  check-title:
+    uses: ./.github/workflows/_pr-title-check.yml

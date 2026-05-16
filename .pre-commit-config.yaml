@@ -1,0 +1,23 @@
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+
+repos:
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.45.2
+    hooks:
+      - id: typos
+        name: Check typos for files
+        stages: [pre-commit]
+      - id: typos
+        name: Check typos for commit messages
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: commit-style-check
+        name: Custom commit message style check
+        entry: odev-commit-msg
+        language: python
+        additional_dependencies: ['git+https://github.com/Noai-oss/odev.git@cd36de80bdbfc5e9b2c84f15210823562b87aa9d']
+        stages: [commit-msg]
