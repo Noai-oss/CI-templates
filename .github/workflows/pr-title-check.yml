@@ -1,9 +1,26 @@
-name: PR Title Check
+name: Validate PR title
 
 on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
   pull_request:
-    types: [opened, edited, synchronize]
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+defaults:
+  run:
+    shell: bash -x -e -u -o pipefail {0}
+
+permissions:
+  pull-requests: read
 
 jobs:
-  check-title:
-    uses: ./.github/workflows/_pr-title-check.yml
+  semantic-pull-request:
+    uses: ./.github/workflows/_semantic_pull_request.yml
