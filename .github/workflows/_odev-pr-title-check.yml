@@ -1,13 +1,12 @@
-name: Reusable PR Title Check
+name: Odev PR Title Check
 
 on:
   workflow_call:
     inputs:
-      checker_source:
-        description: uvx --from source for the title checker. Use "." in odev itself.
+      local_dir:
+        description: local source dir to install odev
         required: false
         type: string
-        default: git+https://github.com/Noai-oss/odev.git@cd36de80bdbfc5e9b2c84f15210823562b87aa9d
 
 permissions:
   contents: read
@@ -18,18 +17,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 1
-          persist-credentials: false
-
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
       - name: Check PR title
         shell: bash -e -u -o pipefail {0}
         env:
+          LOCAL_DIR: ${{ inputs.local_dir }}
           GITHUB_PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
+          ODEV_GITHUB_URL: "https://github.com/Noai-oss/odev.git"
+          ODEV_VERSION: "0.1.0"
         run: |
           printf '%s\n' "$GITHUB_PULL_REQUEST_TITLE" > pr_title.txt
-          uvx --from "${{ inputs.checker_source }}" odev-commit-msg pr_title.txt
+          odev_path="${LOCAL_DIR:-git+$ODEV_GITHUB_URL@v$ODEV_VERSION}"
+          uvx --from "$odev_path" odev-pr-title-check pr_title.txt

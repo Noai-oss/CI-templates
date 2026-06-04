@@ -1,1 +1,1 @@
-# CI-templates-WIP
+# CI-templates
