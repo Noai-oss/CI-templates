@@ -68,18 +68,21 @@ if [ -z "$branch" ]; then
   die "cannot push release commit from a detached HEAD"
 fi
 
+if [ -n "$(git status --porcelain)" ]; then
+  die "working directory has uncommitted changes"
+fi
+
 echo "Preparing ${version}..."
 git_cliff --tag "$version" -o CHANGELOG.md
 
-git add -A
+git add CHANGELOG.md
 git commit -m "chore(release): prepare for ${version}"
 
 git show --stat HEAD
 
 git tag -a "$version" -m "$version"
 
-git push "$remote" "$branch"
-git push "$remote" "$version"
+git push "$remote" "$branch" "$version"
 
 release_notes_file="$(mktemp)"
 trap 'rm -f "$release_notes_file"' EXIT
