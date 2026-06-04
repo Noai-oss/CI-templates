@@ -68,6 +68,10 @@ if [ -z "$branch" ]; then
   die "cannot push release commit from a detached HEAD"
 fi
 
+if [ "$branch" != "main" ]; then
+  die "release must be run from main branch, current branch is $branch"
+fi
+
 if [ -n "$(git status --porcelain)" ]; then
   die "working directory has uncommitted changes"
 fi
