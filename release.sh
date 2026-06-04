@@ -37,6 +37,21 @@ gh_release() {
   GH_TOKEN="$github_token" gh release "$@"
 }
 
+confirm() {
+  local prompt="$1"
+  local reply
+
+  if [ ! -t 0 ]; then
+    die "$prompt requires interactive confirmation"
+  fi
+
+  read -r -p "$prompt [y/N] " reply
+  case "$reply" in
+    [yY] | [yY][eE][sS]) ;;
+    *) die "aborted" ;;
+  esac
+}
+
 if [ "$#" -gt 1 ]; then
   usage
   exit 2
@@ -79,17 +94,31 @@ fi
 echo "Preparing ${version}..."
 git_cliff --tag "$version" -o CHANGELOG.md
 
+if git diff --quiet -- CHANGELOG.md; then
+  die "CHANGELOG.md has no changes"
+fi
+
+echo "Review CHANGELOG.md changes:"
+git --no-pager diff -- CHANGELOG.md
+confirm "Commit release preparation for ${version}?"
+
 git add CHANGELOG.md
 git commit -m "chore(release): prepare for ${version}"
 
-git show --stat HEAD
+release_notes_file="$(mktemp)"
+trap 'rm -f "$release_notes_file"' EXIT
+
+git_cliff --unreleased --tag "$version" --strip header >"$release_notes_file"
+
+echo "Review release commit:"
+git --no-pager show --stat HEAD
+
+echo "Review release notes:"
+cat "$release_notes_file"
+confirm "Create tag, push, and publish ${version}?"
 
 git tag -a "$version" -m "$version"
 
 git push "$remote" "$branch" "$version"
 
-release_notes_file="$(mktemp)"
-trap 'rm -f "$release_notes_file"' EXIT
-
-git_cliff --current --strip header >"$release_notes_file"
 gh_release create "$version" --title "$version" --notes-file "$release_notes_file"
