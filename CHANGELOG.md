@@ -1,5 +1,21 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+## [0.1.1](https://github.com/Noai-oss/CI-templates/compare/v0.1.0..v0.1.1) - 2026-06-04
+
+### 👷 CI
+
+- Update `_odev-pr-title-check.yml` and mark some reusable workflow outdate ([#4](https://github.com/Noai-oss/CI-templates/issues/4)) - ([0afdf98](https://github.com/Noai-oss/CI-templates/commit/0afdf9867686e8bd9df1f67ca7df8596f87b111c))
+
+### 🔧 Maintenance
+
+- Add `.github\dependabot.yml` ([#2](https://github.com/Noai-oss/CI-templates/issues/2)) - ([b4a897e](https://github.com/Noai-oss/CI-templates/commit/b4a897e8c30da71e4817c917e894cbbf53349000))
+
+## ❤️ New Contributors
+
+* @dependabot[bot] made their first contribution in [#3](https://github.com/Noai-oss/CI-templates/pull/3)
+
 ## [0.1.0] - 2026-05-28
 
 ### 🎉 Features
